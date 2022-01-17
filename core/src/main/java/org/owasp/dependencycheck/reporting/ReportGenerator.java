@@ -311,7 +311,7 @@ public class ReportGenerator {
         if (reportFormat != null) {
             write(outputLocation, reportFormat);
         } else {
-            final File out = getReportFile(outputLocation, null);
+            final File out = getReportFile(outputLocation, (Format) null);
             if (out.isDirectory()) {
                 throw new ReportException("Unable to write non-standard VSL output to a directory, please specify a file name");
             }
@@ -336,7 +336,7 @@ public class ReportGenerator {
                 }
             }
         } else {
-            final File out = getReportFile(outputLocation, format);
+            final File out = getReportFile(outputLocation, (String) context.get("applicationVersion"));
             final String templateName = format.toString().toLowerCase() + "Report";
             processTemplate(templateName, out);
             if (settings.getBoolean(Settings.KEYS.PRETTY_PRINT, false)) {
@@ -385,6 +385,15 @@ public class ReportGenerator {
             return new File(outFile, "dependency-check-report.sarif");
         }
         return outFile;
+    }
+    
+    public static String ANALYSE_PREFIX = "dependency-analyze-report-";
+    public static File getReportFile(String outputLocation, String postfix) {
+        File outFile = new File(outputLocation);
+        if (outFile.getParentFile() == null) {
+            outFile = new File(".", outputLocation);
+        }
+        return new File(outFile, ANALYSE_PREFIX + postfix + ".html");
     }
 
     /**
